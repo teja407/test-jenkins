@@ -2,3 +2,6 @@ https://www.datascience.com/blog/what-is-dataops
 
 https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7
 
+https://devops.com/devops-dataops-catalysts-for-organizational-transformation/
+
+
