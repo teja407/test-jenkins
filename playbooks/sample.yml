@@ -1,4 +1,4 @@
-- name: Play1
+- name: Play1 to test
   hosts: all
   gather_facts: no
   tasks:
