@@ -1,0 +1,9 @@
+- name: Template demo 
+  hosts: TEST 
+  vars:
+    USER: Rama
+  tasks:
+    - name: copy template 
+      template:
+        src: files/sample-template.j2
+        dest: /tmp/sample-template

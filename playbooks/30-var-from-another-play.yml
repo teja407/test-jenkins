@@ -1,0 +1,12 @@
+- name: Define variable 
+  hosts: localhost
+  tasks:
+   - shell: who|wc -l
+     register: out
+   - set_fact:
+       COUNT: "{{out.stdout}}"
+
+- name: Access Variable 
+  hosts: TEST 
+  tasks:
+    - debug: msg={{hostvars['localhost']['COUNT']}}

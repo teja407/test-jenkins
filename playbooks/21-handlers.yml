@@ -1,0 +1,26 @@
+- hosts: TEST 
+  become: yes
+  tasks: 
+    - name: Install httpd Package 
+      package: 
+        name: httpd 
+        state: present 
+      notify: Restart HTTPD
+      register: out 
+
+  ### If the requirement is running an another task immediately if the previous task is changed, then use when condition and handle it
+    - name: Start httpd Service 
+      service:
+        name: httpd 
+        state: started
+      when: out.changed == true 
+
+  ### If the requirement is run a task at the end if any task has been changed at the end of all tasks then use handler. 
+  handlers:
+    - name: Restart HTTPD
+      service:
+        name: httpd 
+        state: restarted
+        enabled: yes
+
+    

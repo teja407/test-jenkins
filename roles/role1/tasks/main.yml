@@ -1,0 +1,9 @@
+- debug:
+    msg: "URL = {{URL}}"
+
+- include_role:
+    name: role2
+    tasks_from: deps 
+
+- debug:
+    msg: "DBUSER = {{DBUSER}}"

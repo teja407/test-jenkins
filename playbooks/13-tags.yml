@@ -1,0 +1,27 @@
+- name: Demo on tags 1
+  gather_facts: no
+  hosts: TEST
+  tags: 
+    - t1
+  tasks:
+    - name: Play1 Task1 
+      debug:
+        msg: Hello Task1 
+      
+    - name: Play1 Task2
+      debug:
+        msg: Hello Task2
+
+- name: Demo on tags2
+  hosts: TEST 
+  gather_facts: no
+  tags:
+    - t2
+  tasks:
+    - name: Play2 Task1 
+      debug:
+        msg: Hello Task1 
+      
+    - name: Play2 Task2
+      debug:
+        msg: Hello Task2

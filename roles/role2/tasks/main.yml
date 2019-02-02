@@ -1,0 +1,6 @@
+- name: load db variable
+  include_vars: "{{DBNAME}}.yml"
+- name: Print role2 
+  debug:
+        msg: "DBNAME = {{DBNAME}}"
+

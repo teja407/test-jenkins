@@ -1,0 +1,7 @@
+- name: Demo on localhost connection 
+  hosts: localhost
+  tasks:
+    - name: Print 
+      debug: 
+        msg: "Hello"
+

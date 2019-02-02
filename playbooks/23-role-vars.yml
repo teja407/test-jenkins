@@ -1,0 +1,5 @@
+- hosts: TEST 
+  #vars:
+  #  URL: play.google.com
+  roles:
+    - { role: role1, URL: play.google.com }

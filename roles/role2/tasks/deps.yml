@@ -1,0 +1,3 @@
+- name: load db variable deps
+  include_vars: "{{DBNAME}}.yml"
+

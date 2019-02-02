@@ -1,0 +1,4 @@
+- hosts: TEST 
+  tasks:
+    - debug:
+        msg: "URL = {{URL}}"

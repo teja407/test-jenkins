@@ -1,0 +1,7 @@
+- hosts: TEST 
+  vars_files:
+    - vars01.yml 
+  tasks:
+    - debug:
+        msg: "URL = {{URL}}"
+        

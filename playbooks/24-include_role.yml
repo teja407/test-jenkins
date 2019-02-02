@@ -1,0 +1,9 @@
+- name: Test include_role 
+  hosts: TEST 
+  tasks: 
+   - debug: 
+      msg: Before Role include 
+
+   - include_role:
+      name: role1
+      tasks_from: demo

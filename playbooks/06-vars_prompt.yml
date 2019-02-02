@@ -1,0 +1,8 @@
+- hosts: TEST
+  vars_prompt:
+    - name: URL
+      prompt: "Enter URL "
+      private: no  
+  tasks: 
+    - debug:
+        msg: "URL = {{URL}}"

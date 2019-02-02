@@ -1,0 +1,11 @@
+- name: Demo on set_fact 
+  hosts: TEST
+  tasks:
+    - name: Define a variable 
+      set_fact:
+        URL: fact.google.com
+
+    - name: Print URL 
+      debug:
+        msg: "URL = {{URL}}"
+      

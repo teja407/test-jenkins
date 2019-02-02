@@ -1,0 +1,15 @@
+- name: Test include_role 
+  hosts: TEST 
+  tasks: 
+   - debug: 
+      msg: Before Role include 
+     register: out
+
+   - debug:
+      msg: "{{out}}"
+
+   - import_role:
+      name: role1
+      tasks_from: demo
+     when: out.changed == false
+  

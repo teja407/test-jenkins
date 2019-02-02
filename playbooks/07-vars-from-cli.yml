@@ -1,0 +1,9 @@
+- hosts: TEST
+  vars_prompt:
+    - name: URL
+      prompt: "Enter URL "
+      private: no  
+  tasks: 
+    - debug:
+        msg: "URL = {{URL}}"
+## Command : ansible-playbook playbooks/07-vars-from-cli.yml --extra-vars "URL=parse.google.com"

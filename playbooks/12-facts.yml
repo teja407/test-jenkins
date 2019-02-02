@@ -1,0 +1,6 @@
+- name: Print facts 
+  hosts: TEST 
+  gather_facts: no  ## Disable when you are not using system facts.
+  tasks:
+    - debug:
+        msg: "ARCH = {{ansible_architecture}}"

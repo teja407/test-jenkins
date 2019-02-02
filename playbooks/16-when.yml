@@ -1,0 +1,12 @@
+- name: when condition 
+  hosts: TEST 
+  tasks: 
+    - name: Run on CentOS 
+      debug:
+        msg: "Hey this OS is CentOS" 
+      when: ansible_distribution == "CentOS"
+
+    - name: RUn on Ubuntu
+      debug:
+        msg: "Hey this OS is Ubuntu" 
+      when: ansible_distribution == "Debian"

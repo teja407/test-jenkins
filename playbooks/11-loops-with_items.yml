@@ -1,0 +1,12 @@
+- name: Loops in task 
+  hosts: TEST 
+  tasks:
+    - name: Print a value 
+      debug:
+        msg: "URL = {{item}}"
+      with_items:
+        - task1.google.com 
+        - task2.google.com
+
+
+      

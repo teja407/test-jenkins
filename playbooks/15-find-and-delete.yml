@@ -1,0 +1,19 @@
+- name: Find and Delete a file.
+  hosts: TEST 
+  become: yes 
+  tasks: 
+    - name: Find files  
+      find:
+        paths: /tmp/sample
+        recurse: yes
+        file_type: any
+      register: out 
+
+    #- debug:
+    #    msg: "{{out}}"
+
+    - name: Delete the files 
+      file: 
+        path: "{{item.path}}"
+        state: absent
+      with_items: "{{out.files}} "

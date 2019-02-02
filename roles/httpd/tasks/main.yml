@@ -1,0 +1,47 @@
+- name: Install httpd 
+  package:
+    name: "{{item}}"
+    state: present 
+  with_items:
+    - httpd 
+    - httpd-devel
+    - gcc
+  notify: Restart HTTPD
+
+- name: Get ModJK dir
+  shell: echo {{JKURL}} | awk -F / '{print $NF}' | sed -e 's/.tar.gz//'
+  register: out 
+
+- name: Define MODJK dir 
+  set_fact:
+    JKDIR: "/opt/{{out.stdout}}"
+
+- name: Download ModJK and extract it
+  unarchive:
+    src: "{{JKURL}}"
+    dest: "/opt"
+    remote_src: yes
+
+- name: Compile MOdJK 
+  shell: ./configure --with-apxs=/bin/apxs && make && make install 
+  args:
+    chdir: "{{JKDIR}}/native"
+  notify: Restart HTTPD
+
+- name: Update worker properties file 
+  template: 
+    src: worker.properties.j2 
+    dest: "/etc/httpd/conf.d/worker.properties"
+  vars:
+    TOMCATIP: localhost
+  notify: Restart HTTPD
+
+- name: Update mod-jk config file 
+  copy:
+    src: mod-jk.conf
+    dest: /etc/httpd/conf.d/mod-jk.conf
+  notify: Restart HTTPD
+
+
+
+

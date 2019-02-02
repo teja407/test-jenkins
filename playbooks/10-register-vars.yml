@@ -1,0 +1,17 @@
+- name: Demo on register variables 
+  hosts: TEST 
+  tasks:
+    - name: Run shell command 
+      shell: who | wc -l 
+      register: OUT 
+
+    - name: Define variable 
+      set_fact:
+        USERS: "{{OUT.stdout}}"
+
+    - name: Print No of users 
+      debug:
+        msg: "Number of Users = {{USERS}}"
+      
+
+    

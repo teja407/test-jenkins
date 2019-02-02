@@ -1,0 +1,9 @@
+- name: Install a Package 
+  hosts: TEST 
+  become: true  
+  tasks: 
+    - name: Install a Package 
+      package: 
+        name: gcc 
+        state: present 
+        

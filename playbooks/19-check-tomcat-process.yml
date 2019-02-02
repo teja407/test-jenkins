@@ -1,0 +1,16 @@
+- hosts: TEST 
+  tasks:
+    - name: Check tomcat process 
+      shell: ps -ef | grep java | grep apache-tomcat | grep -v grep
+      register: out
+      ignore_errors: yes
+
+    - name: Print Command Status 
+      debug:
+        msg: TOmcat is running
+      when: out.rc == 0 
+
+    - name: Print Command Status 
+      debug:
+        msg: TOmcat is not running
+      when: out.rc != 0 

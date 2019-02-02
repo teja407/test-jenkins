@@ -1,0 +1,4 @@
+- name: Some role exa
+  hosts: TEST 
+  roles:
+   - role1
