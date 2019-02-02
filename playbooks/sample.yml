@@ -1,0 +1,7 @@
+- name: Play1
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Play1 Task1 - Check ping
+      ping:
+

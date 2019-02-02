@@ -7,6 +7,7 @@
     DBNAME: studentapp
     DBUSER: student
     DBPASS: student@1
+    
   become: yes 
   tasks:
     - name: Install MariaDB Server 
@@ -43,7 +44,8 @@
       mysql_user:
         name: "{{DBUSER}}"
         password: "{{DBPASS}}"
-        host: workstation.c.devops26-195800.internal
+        host: test.c.atomic-bird-196716.internal
+
         #host_all: yes
         priv: "{{DBNAME}}.*:ALL,GRANT"
         state: present
@@ -136,7 +138,7 @@
   tags:
     - WEB
   vars:
-    JKURL: http://redrockdigimark.com/apachemirror/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.42-src.tar.gz
+    JKURL: https://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.42-src.tar.gz
   tasks:
     - name: Install Web Server 
       package:
