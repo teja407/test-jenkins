@@ -1,5 +1,5 @@
 - name: Install and Configure MariaDB
-  hosts: TEST
+  hosts: all
   gather_facts: no
   tags:
     - DB
@@ -44,7 +44,7 @@
       mysql_user:
         name: "{{DBUSER}}"
         password: "{{DBPASS}}"
-        host: test.c.atomic-bird-196716.internal
+        host: ansibletest.c.atomic-bird-196716.internal
 
         #host_all: yes
         priv: "{{DBNAME}}.*:ALL,GRANT"
