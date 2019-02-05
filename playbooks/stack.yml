@@ -1,5 +1,5 @@
 - name: Install and Configure MariaDB
-  hosts: all
+  hosts: TEST
   gather_facts: no
   tags:
     - DB
