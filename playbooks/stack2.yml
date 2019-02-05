@@ -1,0 +1,188 @@
+- name: Install and Configure MariaDB
+  hosts: TEST
+  gather_facts: no
+  tags:
+    - DB
+  vars:
+    DBNAME: studentapp
+    DBUSER: student
+    DBPASS: student@1
+    
+  become: yes 
+  tasks:
+    - name: Install MariaDB Server 
+      package:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - MySQL-python
+        - mariadb-server
+
+    - name: Start MariaDB 
+      service:
+        name: mariadb
+        state: started 
+        enabled: yes 
+        
+    - name: Create Student DB in MariaDB
+      mysql_db:
+        name: "{{DBNAME}}"
+        state: present 
+      
+    - name: Copy SQL file 
+      copy:
+        src: files/studentapp.sql 
+        dest: /tmp/studentapp.sql 
+
+    - name: Create Database schema 
+      mysql_db:
+        state: import
+        name: all
+        target: /tmp/studentapp.sql
+
+    - name: Create DB User 
+      mysql_user:
+        name: "{{DBUSER}}"
+        password: "{{DBPASS}}"
+        host: ansible-test4.c.atomic-bird-196716.internal
+
+        #host_all: yes
+        priv: "{{DBNAME}}.*:ALL,GRANT"
+        state: present
+
+- name: Install and Configure Tomcat
+  hosts: TEST
+  become: yes
+  gather_facts: no
+  tags:
+    - APP
+  vars:
+    TURL: https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29.tar.gz
+  tasks:
+    - name: Install Java 
+      package:
+        name: java 
+        state: installed 
+
+    - name: Get tar dir
+      shell: echo {{TURL}} | awk -F / '{print $NF}' | sed -e 's/.tar.gz//'
+      register: out 
+
+    - name: Define TAR Dir Variable 
+      set_fact:
+        T_DIR: "/opt/{{out.stdout}}"
+
+    - name: Check Tomcat exists or not. 
+      stat:
+        path: "{{T_DIR}}"
+      register: out 
+
+    - name: Download Tomcat and extract it
+      unarchive:
+        src: "{{TURL}}"
+        dest: "/opt"
+        remote_src: yes
+      when: out.stat.exists == false
+
+    - name: Find webapps 
+      find:
+        paths: "{{T_DIR}}/webapps"
+        file_type: any
+      register: out
+
+    - name: Delete files 
+      file:
+        path: "{{item.path}}"
+        state: absent
+      with_items: "{{out.files}}"
+
+    - name: Download War file 
+      get_url:
+        url: https://github.com/cit-ager/APP-STACK/raw/master/student.war
+        dest: "{{T_DIR}}/webapps/student.war"
+
+    - name: Download JDBC jar file 
+      get_url: 
+        url: https://github.com/cit-ager/APP-STACK/raw/master/mysql-connector-java-5.1.40.jar
+        dest: "{{T_DIR}}/lib/mysql-connector-java-5.1.40.jar"
+        
+    - name: Remove content in a file 
+      lineinfile:
+        path: "{{T_DIR}}/conf/context.xml"
+        regexp: TestDB
+        state: absent
+
+    - name: update  content in a file 
+      lineinfile:
+        path: "{{T_DIR}}/conf/context.xml"
+        insertbefore: "^</Context>$"
+        line: '<Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource" maxActive="50" maxIdle="30" maxWait="10000" username="student" password="student@1" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/studentapp"/>'
+
+    - name: Check tomcat process 
+      shell: ps -ef | grep java | grep apache-tomcat | grep -v grep
+      register: out
+      ignore_errors: yes
+
+    - name: Start Tomcat
+      shell: "nohup {{T_DIR}}/bin/startup.sh"
+      when: out.rc != 0
+
+    - name: Restart Tomcat
+      shell: "{{T_DIR}}/bin/shutdown.sh && sleep 15 && nohup {{T_DIR}}/bin/startup.sh"
+      when: out.rc == 0
+
+- name: Install and Configure Apache Web Server
+  hosts: TEST
+  become: yes
+  gather_facts: no
+  tags:
+    - WEB
+  vars:
+    JKURL: https://archive.apache.org/dist/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.42-src.tar.gz
+  tasks:
+    - name: Install Web Server 
+      package:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - httpd-devel
+        - gcc 
+
+    - name: Get ModJK dir
+      shell: echo {{JKURL}} | awk -F / '{print $NF}' | sed -e 's/.tar.gz//'
+      register: out 
+
+    - name: Define MODJK dir 
+      set_fact:
+        JKDIR: "/opt/{{out.stdout}}"
+
+    - name: Download ModJK and extract it
+      unarchive:
+        src: "{{JKURL}}"
+        dest: "/opt"
+        remote_src: yes
+
+    - name: Compile MOdJK 
+      shell: ./configure --with-apxs=/bin/apxs && make && make install 
+      args:
+        chdir: "{{JKDIR}}/native"
+
+    - name: Update worker properties file 
+      template: 
+        src: files/worker.properties.j2 
+        dest: "/etc/httpd/conf.d/worker.properties"
+      vars:
+        TOMCATIP: localhost
+
+    - name: Update mod-jk config file 
+      copy:
+        src: files/mod-jk.conf
+        dest: /etc/httpd/conf.d/mod-jk.conf
+
+    - name: Restart httpd 
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+
