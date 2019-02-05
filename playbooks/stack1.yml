@@ -1,5 +1,5 @@
 - name: Install and Configure MariaDB
-  hosts: all
+  hosts: 10.142.0.19
   gather_facts: no
   tags:
     - DB
