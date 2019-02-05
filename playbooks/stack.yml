@@ -44,7 +44,7 @@
       mysql_user:
         name: "{{DBUSER}}"
         password: "{{DBPASS}}"
-        host: jenkins-test2.c.atomic-bird-196716.internal
+        host: ansible-test3.c.atomic-bird-196716.internal
 
         #host_all: yes
         priv: "{{DBNAME}}.*:ALL,GRANT"
